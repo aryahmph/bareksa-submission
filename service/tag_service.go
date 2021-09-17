@@ -7,4 +7,5 @@ import (
 
 type TagService interface {
 	Create(ctx context.Context, request web.TagCreateRequest) web.TagResponse
+	FindAll(ctx context.Context) []web.TagResponse
 }

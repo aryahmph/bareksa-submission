@@ -38,3 +38,13 @@ func (t *TagServiceImpl) Create(ctx context.Context, request web.TagCreateReques
 
 	return helper.ToTagResponse(tag)
 }
+
+func (t *TagServiceImpl) FindAll(ctx context.Context) []web.TagResponse {
+	tx, err := t.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	tags := t.TagRepository.FindAll(ctx, tx)
+
+	return helper.ToTagResponses(tags)
+}
