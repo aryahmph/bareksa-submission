@@ -13,6 +13,7 @@ func NewRouter(tagController controller.TagController, topicController controlle
 	router.GET("/api/tags/:tagName", tagController.FindByName)
 	router.POST("/api/tags", tagController.Create)
 
+	router.GET("/api/topics", topicController.FindAll)
 	router.POST("/api/topics", topicController.Create)
 
 	router.PanicHandler = exception.ErrorHandler

@@ -27,7 +27,19 @@ func (t *TopicRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, topic domain
 }
 
 func (t *TopicRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Topic {
-	panic("implement me")
+	SQL := "SELECT id, name FROM topics"
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var topics []domain.Topic
+	for rows.Next() {
+		topic := domain.Topic{}
+		err := rows.Scan(&topic.Id, &topic.Name)
+		helper.PanicIfError(err)
+		topics = append(topics, topic)
+	}
+	return topics
 }
 
 func (t *TopicRepositoryImpl) FindByName(ctx context.Context, tx *sql.Tx, topicName string) (domain.Topic, error) {

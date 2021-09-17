@@ -38,3 +38,13 @@ func (t *TopicServiceImpl) Create(ctx context.Context, request web.TopicCreateRe
 
 	return helper.ToTopicResponse(topic)
 }
+
+func (t *TopicServiceImpl) FindAll(ctx context.Context) []web.TopicResponse {
+	tx, err := t.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	topics := t.TopicRepository.FindAll(ctx, tx)
+
+	return helper.ToTopicResponses(topics)
+}
