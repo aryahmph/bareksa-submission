@@ -9,6 +9,7 @@ import (
 	"bareksa-aryayunanta/service"
 	"fmt"
 	"github.com/go-playground/validator/v10"
+	_ "github.com/go-sql-driver/mysql"
 	"net/http"
 )
 
