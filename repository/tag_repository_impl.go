@@ -35,7 +35,19 @@ func (t *TagRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, tag domain.T
 }
 
 func (t *TagRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Tag {
-	panic("implement me")
+	SQL := "SELECT id, name FROM tags"
+	rows, err := tx.QueryContext(ctx, SQL)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var tags []domain.Tag
+	for rows.Next() {
+		tag := domain.Tag{}
+		err := rows.Scan(&tag.ID, &tag.Name)
+		helper.PanicIfError(err)
+		tags = append(tags, tag)
+	}
+	return tags
 }
 
 func (t *TagRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, tagId uint32) domain.Tag {
