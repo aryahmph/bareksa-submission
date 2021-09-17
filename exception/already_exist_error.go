@@ -4,6 +4,6 @@ type AlreadyExistError struct {
 	Error string
 }
 
-func NewAlreadyExistError(error string) *AlreadyExistError {
-	return &AlreadyExistError{Error: error}
+func NewAlreadyExistError(error string) AlreadyExistError {
+	return AlreadyExistError{Error: error}
 }
