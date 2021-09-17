@@ -138,3 +138,57 @@ func TestListTagSuccess(t *testing.T) {
 	assert.Equal(t, tag2.ID, uint32(tagResponse2["id"].(float64)))
 	assert.Equal(t, tag2.Name, tagResponse2["name"])
 }
+
+func TestGetTagSuccess(t *testing.T) {
+	db := setupTestDB()
+	truncateTags(db)
+
+	tx, _ := db.Begin()
+	tagRepository := repository.NewTagRepositoryImpl()
+	tag := tagRepository.Save(context.Background(), tx, domain.Tag{Name: "investment"})
+	tx.Commit()
+
+	router := setupRouter(db)
+
+	request := httptest.NewRequest(http.MethodGet, "http://localhost:8080/api/tags/investment", nil)
+	request.Header.Add("X-API-Key", "BAREKSA_INTERNSHIP")
+
+	recorder := httptest.NewRecorder()
+
+	router.ServeHTTP(recorder, request)
+
+	response := recorder.Result()
+	assert.Equal(t, 200, response.StatusCode)
+
+	body, _ := io.ReadAll(response.Body)
+	var responseBody map[string]interface{}
+	json.Unmarshal(body, &responseBody)
+
+	assert.Equal(t, 200, int(responseBody["code"].(float64)))
+	assert.Equal(t, "OK", responseBody["status"])
+	assert.Equal(t, tag.ID, uint32(responseBody["data"].(map[string]interface{})["id"].(float64)))
+	assert.Equal(t, tag.Name, responseBody["data"].(map[string]interface{})["name"])
+}
+
+func TestGetTagFailed(t *testing.T) {
+	db := setupTestDB()
+	truncateTags(db)
+	router := setupRouter(db)
+
+	request := httptest.NewRequest(http.MethodGet, "http://localhost:8080/api/tags/not-found", nil)
+	request.Header.Add("X-API-Key", "BAREKSA_INTERNSHIP")
+
+	recorder := httptest.NewRecorder()
+
+	router.ServeHTTP(recorder, request)
+
+	response := recorder.Result()
+	assert.Equal(t, 404, response.StatusCode)
+
+	body, _ := io.ReadAll(response.Body)
+	var responseBody map[string]interface{}
+	json.Unmarshal(body, &responseBody)
+
+	assert.Equal(t, 404, int(responseBody["code"].(float64)))
+	assert.Equal(t, "NOT FOUND", responseBody["status"])
+}
