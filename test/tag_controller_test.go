@@ -36,10 +36,16 @@ func setupTestDB() *sql.DB {
 
 func setupRouter(db *sql.DB) http.Handler {
 	validate := validator.New()
+
 	tagRepository := repository.NewTagRepositoryImpl()
 	tagService := service.NewTagServiceImpl(tagRepository, db, validate)
 	tagController := controller.NewTagControllerImpl(tagService)
-	router := app.NewRouter(tagController)
+
+	topicRepository := repository.NewTopicRepositoryImpl()
+	topicService := service.NewTopicServiceImpl(topicRepository, db, validate)
+	topicController := controller.NewTopicControllerImpl(topicService)
+
+	router := app.NewRouter(tagController, topicController)
 
 	return middleware.NewLogMiddleware(router)
 }
