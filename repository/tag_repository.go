@@ -12,4 +12,5 @@ type TagRepository interface {
 	Delete(ctx context.Context, tx *sql.Tx, tag domain.Tag)
 	FindAll(ctx context.Context, tx *sql.Tx) []domain.Tag
 	FindById(ctx context.Context, tx *sql.Tx, tagId uint32) domain.Tag
+	IsExistByName(ctx context.Context, tx *sql.Tx, tagName string) bool
 }

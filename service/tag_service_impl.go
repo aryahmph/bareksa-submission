@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bareksa-aryayunanta/exception"
 	"bareksa-aryayunanta/helper"
 	"bareksa-aryayunanta/model/domain"
 	"bareksa-aryayunanta/model/web"
@@ -29,7 +30,11 @@ func (t *TagServiceImpl) Create(ctx context.Context, request web.TagCreateReques
 	defer helper.CommitOrRollback(tx)
 
 	tag := domain.Tag{Name: request.Name}
-	tag = t.TagRepository.Save(ctx, tx, tag)
+	if isExist := t.TagRepository.IsExistByName(ctx, tx, tag.Name); !isExist {
+		tag = t.TagRepository.Save(ctx, tx, tag)
+	} else {
+		panic(exception.NewAlreadyExistError("category is already exist"))
+	}
 
 	return helper.ToTagResponse(tag)
 }
