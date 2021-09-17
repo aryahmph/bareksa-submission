@@ -48,3 +48,16 @@ func (t *TagServiceImpl) FindAll(ctx context.Context) []web.TagResponse {
 
 	return helper.ToTagResponses(tags)
 }
+
+func (t *TagServiceImpl) FindByName(ctx context.Context, tagName string) web.TagResponse {
+	tx, err := t.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	tag, err := t.TagRepository.FindByName(ctx, tx, tagName)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	return helper.ToTagResponse(tag)
+}
