@@ -5,6 +5,7 @@ import (
 	"bareksa-aryayunanta/model/domain"
 	"context"
 	"database/sql"
+	"errors"
 )
 
 type TagRepositoryImpl struct {
@@ -26,14 +27,6 @@ func (t *TagRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, tag domain.Tag
 	return tag
 }
 
-func (t *TagRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, tag domain.Tag) domain.Tag {
-	panic("implement me")
-}
-
-func (t *TagRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, tag domain.Tag) {
-	panic("implement me")
-}
-
 func (t *TagRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Tag {
 	SQL := "SELECT id, name FROM tags"
 	rows, err := tx.QueryContext(ctx, SQL)
@@ -50,8 +43,20 @@ func (t *TagRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.Ta
 	return tags
 }
 
-func (t *TagRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, tagId uint32) domain.Tag {
-	panic("implement me")
+func (t *TagRepositoryImpl) FindByName(ctx context.Context, tx *sql.Tx, tagName string) (domain.Tag, error) {
+	SQL := "SELECT id, name FROM tags WHERE name = ? LIMIT 1"
+	rows, err := tx.QueryContext(ctx, SQL, tagName)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	tag := domain.Tag{}
+	if rows.Next() {
+		err := rows.Scan(&tag.ID, &tag.Name)
+		helper.PanicIfError(err)
+		return tag, nil
+	} else {
+		return tag, errors.New("tag is not found")
+	}
 }
 
 func (t *TagRepositoryImpl) IsExistByName(ctx context.Context, tx *sql.Tx, tagName string) bool {
