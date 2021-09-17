@@ -19,3 +19,18 @@ func ToTagResponses(tags []domain.Tag) []web.TagResponse {
 	}
 	return tagResponses
 }
+
+func ToTopicResponse(topic domain.Topic) web.TopicResponse {
+	return web.TopicResponse{
+		Id:   topic.Id,
+		Name: topic.Name,
+	}
+}
+
+func ToTopicResponses(topics []domain.Topic) []web.TopicResponse {
+	var tagResponses []web.TopicResponse
+	for _, topic := range topics {
+		tagResponses = append(tagResponses, ToTopicResponse(topic))
+	}
+	return tagResponses
+}
