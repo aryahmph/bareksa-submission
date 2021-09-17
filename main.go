@@ -23,9 +23,10 @@ func main() {
 
 	router := app.NewRouter(tagController)
 	logMiddleware := middleware.NewLogMiddleware(router)
+	authMiddleware := middleware.NewAuthMiddleware(logMiddleware)
 
 	server := http.Server{
-		Handler: logMiddleware,
+		Handler: authMiddleware,
 		Addr:    "localhost:8080",
 	}
 	fmt.Println("-> http server started on http://" + server.Addr)
