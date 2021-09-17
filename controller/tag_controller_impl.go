@@ -29,3 +29,14 @@ func (t *TagControllerImpl) Create(writer http.ResponseWriter, request *http.Req
 
 	helper.WriteToResponseBody(writer, webResponse)
 }
+
+func (t *TagControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	tagResponses := t.TagService.FindAll(request.Context())
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   tagResponses,
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
+}

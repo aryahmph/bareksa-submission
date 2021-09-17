@@ -9,6 +9,7 @@ import (
 func NewRouter(tagController controller.TagController) *httprouter.Router {
 	router := httprouter.New()
 
+	router.GET("/api/tags", tagController.FindAll)
 	router.POST("/api/tags", tagController.Create)
 
 	router.PanicHandler = exception.ErrorHandler
