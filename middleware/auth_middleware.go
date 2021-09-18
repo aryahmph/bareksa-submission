@@ -4,6 +4,7 @@ import (
 	"bareksa-aryayunanta/helper"
 	"bareksa-aryayunanta/model/web"
 	"net/http"
+	"regexp"
 )
 
 type AuthMiddleware struct {
@@ -19,15 +20,21 @@ func (middleware *AuthMiddleware) ServeHTTP(writer http.ResponseWriter, request 
 		// ok
 		middleware.Handler.ServeHTTP(writer, request)
 	} else {
-		// error
-		writer.Header().Set("Content-Type", "application/json")
-		writer.WriteHeader(http.StatusUnauthorized)
+		regex, err := regexp.Compile(`/uploads/(.*)`)
+		helper.PanicIfError(err)
+		if regex.MatchString(request.RequestURI) {
+			middleware.Handler.ServeHTTP(writer, request)
+		} else {
+			// error
+			writer.Header().Set("Content-Type", "application/json")
+			writer.WriteHeader(http.StatusUnauthorized)
 
-		webResponse := web.WebResponse{
-			Code:   http.StatusUnauthorized,
-			Status: "UNAUTHORIZED",
+			webResponse := web.WebResponse{
+				Code:   http.StatusUnauthorized,
+				Status: "UNAUTHORIZED",
+			}
+
+			helper.WriteToResponseBody(writer, webResponse)
 		}
-
-		helper.WriteToResponseBody(writer, webResponse)
 	}
 }

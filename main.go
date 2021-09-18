@@ -25,7 +25,11 @@ func main() {
 	topicService := service.NewTopicServiceImpl(topicRepository, db, validate)
 	topicController := controller.NewTopicControllerImpl(topicService)
 
-	router := app.NewRouter(tagController, topicController)
+	newsRepository := repository.NewNewsRepositoryImpl()
+	newsService := service.NewNewsServiceImpl(newsRepository, db, validate)
+	newsController := controller.NewNewsControllerImpl(newsService)
+
+	router := app.NewRouter(tagController, topicController, newsController)
 	logMiddleware := middleware.NewLogMiddleware(router)
 	authMiddleware := middleware.NewAuthMiddleware(logMiddleware)
 
