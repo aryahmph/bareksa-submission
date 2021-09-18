@@ -7,7 +7,7 @@ services:
       - MYSQL_ROOT_PASSWORD=aryahmph
       - MYSQL_DATABASE=bareksa_aryayunanta
     ports:
-      - "3306:3306"
+      - 3306:3306
     networks:
       - bareksa_internship_api
 
@@ -15,12 +15,12 @@ services:
     container_name: bareksa-internship-api
     image: bareksa-internship-api:latest
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - mysql
     environment:
       - MYSQL_ROOT_PASSWORD=aryahmph
-      - MYSQL_DATABASE=election
+      - MYSQL_DATABASE=bareksa_aryayunanta
     networks:
       - bareksa_internship_api
 

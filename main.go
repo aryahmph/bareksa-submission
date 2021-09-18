@@ -35,7 +35,7 @@ func main() {
 
 	server := http.Server{
 		Handler: authMiddleware,
-		Addr:    "localhost:8080",
+		Addr:    ":8080",
 	}
 	fmt.Println("-> http server started on http://" + server.Addr)
 	err := server.ListenAndServe()
