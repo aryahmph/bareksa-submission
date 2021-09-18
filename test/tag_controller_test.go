@@ -23,7 +23,7 @@ import (
 )
 
 func setupTestDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:@tcp(localhost:3306)/bareska_aryayunanta_test")
+	db, err := sql.Open("mysql", "root:@tcp(localhost:3306)/bareska_aryayunanta_test?parseTime=true")
 	helper.PanicIfError(err)
 
 	db.SetMaxIdleConns(5)
@@ -45,7 +45,11 @@ func setupRouter(db *sql.DB) http.Handler {
 	topicService := service.NewTopicServiceImpl(topicRepository, db, validate)
 	topicController := controller.NewTopicControllerImpl(topicService)
 
-	router := app.NewRouter(tagController, topicController)
+	newsRepository := repository.NewNewsRepositoryImpl()
+	newsService := service.NewNewsServiceImpl(newsRepository, db, validate)
+	newsController := controller.NewNewsControllerImpl(newsService, topicService, tagService)
+
+	router := app.NewRouter(tagController, topicController, newsController)
 
 	return middleware.NewLogMiddleware(router)
 }

@@ -45,7 +45,7 @@ func (n *NewsControllerImpl) Create(writer http.ResponseWriter, request *http.Re
 	file, fileHeader, err := request.FormFile("image")
 	helper.PanicIfError(err)
 	fileName := helper.RandomString(fileHeader.Filename, len(news.Title))
-	fileDestination, err := os.Create("./uploads/" + fileName)
+	fileDestination, err := os.Create("./uploads/news/" + fileName)
 	helper.PanicIfError(err)
 	_, err = io.Copy(fileDestination, file)
 	helper.PanicIfError(err)
@@ -60,6 +60,7 @@ func (n *NewsControllerImpl) Create(writer http.ResponseWriter, request *http.Re
 	}
 
 	// Create news
+	news.ImageURL = fileName
 	newsResponse := n.NewsService.Create(ctx, news)
 	webResponse := web.WebResponse{
 		Code:   200,

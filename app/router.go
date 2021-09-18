@@ -20,9 +20,9 @@ func NewRouter(tagController controller.TagController, topicController controlle
 	router.POST("/api/news", newsController.Create)
 	router.GET("/api/news", newsController.FindAll)
 
-	directory := http.Dir("./uploads")
+	directory := http.Dir("./uploads/news/")
 	fileServer := http.FileServer(directory)
-	router.NotFound = fileServer
+	router.NotFound = http.StripPrefix("/uploads/news/",fileServer)
 
 	router.PanicHandler = exception.ErrorHandler
 

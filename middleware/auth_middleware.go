@@ -20,7 +20,7 @@ func (middleware *AuthMiddleware) ServeHTTP(writer http.ResponseWriter, request 
 		// ok
 		middleware.Handler.ServeHTTP(writer, request)
 	} else {
-		regex, err := regexp.Compile(`/uploads/(.*)`)
+		regex, err := regexp.Compile(`/uploads/news/(.*)`)
 		helper.PanicIfError(err)
 		if regex.MatchString(request.RequestURI) {
 			middleware.Handler.ServeHTTP(writer, request)
