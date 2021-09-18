@@ -48,3 +48,11 @@ func (t *TopicServiceImpl) FindAll(ctx context.Context) []web.TopicResponse {
 
 	return helper.ToTopicResponses(topics)
 }
+
+func (t *TopicServiceImpl) IsExistByName(ctx context.Context, topicName string) bool {
+	tx, err := t.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	return t.TopicRepository.IsExistByName(ctx, tx, topicName)
+}

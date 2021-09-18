@@ -8,4 +8,5 @@ import (
 type TopicService interface {
 	Create(ctx context.Context, request web.TopicCreateRequest) web.TopicResponse
 	FindAll(ctx context.Context) []web.TopicResponse
+	IsExistByName(ctx context.Context, topicName string) bool
 }

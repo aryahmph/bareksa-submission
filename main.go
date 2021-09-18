@@ -27,7 +27,7 @@ func main() {
 
 	newsRepository := repository.NewNewsRepositoryImpl()
 	newsService := service.NewNewsServiceImpl(newsRepository, db, validate)
-	newsController := controller.NewNewsControllerImpl(newsService)
+	newsController := controller.NewNewsControllerImpl(newsService, topicService, tagService)
 
 	router := app.NewRouter(tagController, topicController, newsController)
 	logMiddleware := middleware.NewLogMiddleware(router)

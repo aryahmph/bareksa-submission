@@ -17,6 +17,7 @@ func NewRouter(tagController controller.TagController, topicController controlle
 	router.GET("/api/topics", topicController.FindAll)
 	router.POST("/api/topics", topicController.Create)
 
+	router.POST("/api/news", newsController.Create)
 	router.GET("/api/news", newsController.FindAll)
 
 	directory := http.Dir("./uploads")

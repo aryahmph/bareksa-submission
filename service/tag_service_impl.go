@@ -61,3 +61,11 @@ func (t *TagServiceImpl) FindByName(ctx context.Context, tagName string) web.Tag
 
 	return helper.ToTagResponse(tag)
 }
+
+func (t *TagServiceImpl) IsExistByName(ctx context.Context, tagName string) bool {
+	tx, err := t.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	return t.TagRepository.IsExistByName(ctx, tx, tagName)
+}

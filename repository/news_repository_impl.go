@@ -15,8 +15,8 @@ func NewNewsRepositoryImpl() *NewsRepositoryImpl {
 }
 
 func (n *NewsRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, news domain.News) domain.News {
-	SQL := "INSERT INTO news(id_topic, title, short_desc, content, image_url, writer) VALUES (?, ?, ?, ?, ?, ?)"
-	result, err := tx.ExecContext(ctx, SQL, news.IDTopic, news.Title, news.Content, news.ImageURL, news.Writer)
+	SQL := "INSERT INTO news(topic_name, title, short_desc, content, image_url, writer, status, published_at)\nVALUES (?, ?, ?, ?, ?, ?, 'publish', CURRENT_DATE);"
+	result, err := tx.ExecContext(ctx, SQL, news.TopicName, news.Title, news.ShortDesc, news.Content, news.ImageURL, news.Writer)
 	helper.PanicIfError(err)
 
 	id, err := result.LastInsertId()
@@ -24,6 +24,12 @@ func (n *NewsRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, news domain.N
 
 	news.ID = uint32(id)
 	return news
+}
+
+func (n *NewsRepositoryImpl) SaveTag(ctx context.Context, tx *sql.Tx, newsId uint32, tagName string) {
+	SQL := "INSERT INTO news_tags(id_news, name_tag)\nVALUES (?, ?)"
+	_, err := tx.ExecContext(ctx, SQL, newsId, tagName)
+	helper.PanicIfError(err)
 }
 
 func (n *NewsRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.News {
