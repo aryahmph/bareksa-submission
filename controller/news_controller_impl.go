@@ -72,6 +72,20 @@ func (n *NewsControllerImpl) Create(writer http.ResponseWriter, request *http.Re
 	helper.WriteToResponseBody(writer, webResponse)
 }
 
+func (n *NewsControllerImpl) Delete(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	newsId := params.ByName("newsId")
+	id, err := strconv.Atoi(newsId)
+	helper.PanicIfError(err)
+
+	n.NewsService.Delete(request.Context(), uint32(id))
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
 func (n *NewsControllerImpl) FindAll(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	newsResponses := n.NewsService.FindAll(request.Context())
 	webResponse := web.WebResponse{

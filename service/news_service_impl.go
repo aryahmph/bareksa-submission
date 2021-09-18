@@ -49,6 +49,19 @@ func (n *NewsServiceImpl) Create(ctx context.Context, request domain.News) web.N
 	}
 }
 
+func (n *NewsServiceImpl) Delete(ctx context.Context, newsId uint32) {
+	tx, err := n.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	news, err := n.NewsRepository.FindById(ctx, tx, newsId)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	n.NewsRepository.Delete(ctx, tx, news)
+}
+
 func (n *NewsServiceImpl) FindAll(ctx context.Context) []web.ListNewsResponses {
 	tx, err := n.DB.Begin()
 	helper.PanicIfError(err)

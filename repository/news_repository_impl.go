@@ -33,6 +33,16 @@ func (n *NewsRepositoryImpl) SaveTag(ctx context.Context, tx *sql.Tx, newsId uin
 	helper.PanicIfError(err)
 }
 
+func (n *NewsRepositoryImpl) Delete(ctx context.Context, tx *sql.Tx, news domain.News) {
+	SQL := "DELETE FROM news_tags WHERE id_news = ?"
+	_, err := tx.ExecContext(ctx, SQL, news.ID)
+	helper.PanicIfError(err)
+
+	SQL = "DELETE FROM news WHERE id = ?"
+	_, err = tx.ExecContext(ctx, SQL, news.ID)
+	helper.PanicIfError(err)
+}
+
 func (n *NewsRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.News {
 	SQL := "SELECT id, title, short_desc, image_url, published_at\nFROM news\nWHERE status = 'publish'\nORDER BY published_at DESC"
 	rows, err := tx.QueryContext(ctx, SQL)

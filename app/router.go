@@ -18,6 +18,7 @@ func NewRouter(tagController controller.TagController, topicController controlle
 	router.POST("/api/topics", topicController.Create)
 
 	router.POST("/api/news", newsController.Create)
+	router.DELETE("/api/news/:newsId", newsController.Delete)
 	router.GET("/api/news", newsController.FindAll)
 	router.GET("/api/news/:newsId", newsController.FindById)
 
