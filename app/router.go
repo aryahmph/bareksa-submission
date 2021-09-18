@@ -16,6 +16,8 @@ func NewRouter(tagController controller.TagController, topicController controlle
 	router.GET("/api/topics", topicController.FindAll)
 	router.POST("/api/topics", topicController.Create)
 
+	router.GET("/api/news", topicController.FindAll)
+
 	router.PanicHandler = exception.ErrorHandler
 
 	return router
