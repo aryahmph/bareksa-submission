@@ -18,3 +18,12 @@ type ListNewsResponses struct {
 	Date        string `json:"date"`
 	ImageURL    string `json:"image_url"`
 }
+
+type GetNewsResponse struct {
+	Id       uint32 `json:"id"`
+	Title    string `json:"title"`
+	Date     string `json:"date"`
+	Writer   string `json:"writer"`
+	ImageURL string `json:"image_url"`
+	Content  string `json:"content"`
+}

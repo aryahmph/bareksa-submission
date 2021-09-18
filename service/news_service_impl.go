@@ -1,6 +1,7 @@
 package service
 
 import (
+	"bareksa-aryayunanta/exception"
 	"bareksa-aryayunanta/helper"
 	"bareksa-aryayunanta/model/domain"
 	"bareksa-aryayunanta/model/web"
@@ -35,7 +36,7 @@ func (n *NewsServiceImpl) Create(ctx context.Context, request domain.News) web.N
 		tag = strings.Trim(tag, " ")
 		n.NewsRepository.SaveTag(ctx, tx, news.ID, tag)
 	}
-	
+
 	return web.NewsResponse{
 		Id:          news.ID,
 		Title:       news.Title,
@@ -60,11 +61,31 @@ func (n *NewsServiceImpl) FindAll(ctx context.Context) []web.ListNewsResponses {
 			Id:          item.ID,
 			Title:       item.Title,
 			Description: item.ShortDesc,
-			Date:        item.PublishedAt.Format("Monday, 02 January 2006"),
+			Date:        helper.TimeFormat(item.PublishedAt),
 			ImageURL:    "http://localhost:8080/uploads/news/" + item.ImageURL,
 		}
 		responses = append(responses, response)
 	}
 
 	return responses
+}
+
+func (n *NewsServiceImpl) FindById(ctx context.Context, newsId uint32) web.GetNewsResponse {
+	tx, err := n.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	news, err := n.NewsRepository.FindById(ctx, tx, newsId)
+	if err != nil {
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	return web.GetNewsResponse{
+		Id:       news.ID,
+		Title:    news.Title,
+		Date:     helper.TimeFormat(news.PublishedAt),
+		Writer:   news.Writer,
+		ImageURL: "http://localhost:8080/uploads/news/" + news.ImageURL,
+		Content:  news.Content,
+	}
 }

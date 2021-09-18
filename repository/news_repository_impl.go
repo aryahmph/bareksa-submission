@@ -5,6 +5,7 @@ import (
 	"bareksa-aryayunanta/model/domain"
 	"context"
 	"database/sql"
+	"errors"
 )
 
 type NewsRepositoryImpl struct {
@@ -46,6 +47,23 @@ func (n *NewsRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.N
 		news = append(news, new2)
 	}
 	return news
+}
+
+func (n *NewsRepositoryImpl) FindById(ctx context.Context, tx *sql.Tx, newsId uint32) (domain.News, error) {
+	SQL := "SELECT title, content, image_url, writer, published_at\nFROM news\nWHERE status = 'publish' AND id = ? LIMIT 1"
+	rows, err := tx.QueryContext(ctx, SQL, newsId)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	news := domain.News{}
+	if rows.Next() {
+		err := rows.Scan(&news.Title, &news.Content, &news.ImageURL, &news.Writer, &news.PublishedAt)
+		news.ID = newsId
+		helper.PanicIfError(err)
+		return news, nil
+	} else {
+		return news, errors.New("news is not found")
+	}
 }
 
 func (n *NewsRepositoryImpl) IsExistByID(ctx context.Context, tx *sql.Tx, IDNews uint32) bool {

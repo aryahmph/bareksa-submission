@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -77,6 +78,21 @@ func (n *NewsControllerImpl) FindAll(writer http.ResponseWriter, request *http.R
 		Code:   200,
 		Status: "OK",
 		Data:   newsResponses,
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
+}
+
+func (n *NewsControllerImpl) FindById(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	newsId := params.ByName("newsId")
+	id, err := strconv.Atoi(newsId)
+	helper.PanicIfError(err)
+
+	newsResponse := n.NewsService.FindById(request.Context(), uint32(id))
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   newsResponse,
 	}
 
 	helper.WriteToResponseBody(writer, webResponse)
