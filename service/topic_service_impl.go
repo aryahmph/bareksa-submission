@@ -39,6 +39,31 @@ func (t *TopicServiceImpl) Create(ctx context.Context, request web.TopicCreateRe
 	return helper.ToTopicResponse(topic)
 }
 
+func (t *TopicServiceImpl) FindByName(ctx context.Context, topicName string) []web.ListNewsResponses {
+	tx, err := t.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	if isNewsExist := t.TopicRepository.IsExistByName(ctx, tx, topicName); !isNewsExist {
+		panic(exception.NewNotFoundError("topic is not found"))
+	}
+
+	news := t.TopicRepository.FindByName(ctx, tx, topicName)
+	var responses []web.ListNewsResponses
+	for _, item := range news {
+		response := web.ListNewsResponses{
+			Id:          item.ID,
+			Title:       item.Title,
+			Description: item.ShortDesc,
+			Date:        helper.TimeFormat(item.PublishedAt),
+			ImageURL:    "http://localhost:8080/uploads/news/" + item.ImageURL,
+		}
+		responses = append(responses, response)
+	}
+
+	return responses
+}
+
 func (t *TopicServiceImpl) FindAll(ctx context.Context) []web.TopicResponse {
 	tx, err := t.DB.Begin()
 	helper.PanicIfError(err)

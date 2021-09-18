@@ -15,6 +15,7 @@ func NewRouter(tagController controller.TagController, topicController controlle
 	router.POST("/api/tags", tagController.Create)
 
 	router.GET("/api/topics", topicController.FindAll)
+	router.GET("/api/topics/:topicName", topicController.FindByName)
 	router.POST("/api/topics", topicController.Create)
 
 	router.POST("/api/news", newsController.Create)

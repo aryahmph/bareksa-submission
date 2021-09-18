@@ -42,8 +42,20 @@ func (t *TopicRepositoryImpl) FindAll(ctx context.Context, tx *sql.Tx) []domain.
 	return topics
 }
 
-func (t *TopicRepositoryImpl) FindByName(ctx context.Context, tx *sql.Tx, topicName string) (domain.Topic, error) {
-	panic("implement me")
+func (t *TopicRepositoryImpl) FindByName(ctx context.Context, tx *sql.Tx, topicName string) []domain.News {
+	SQL := "SELECT n.id, n.title, n.short_desc, n.image_url, n.published_at\nFROM news AS n\nJOIN topics t on t.name = n.topic_name\nWHERE n.topic_name = ?"
+	rows, err := tx.QueryContext(ctx, SQL, topicName)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	var news []domain.News
+	for rows.Next() {
+		new2 := domain.News{}
+		err := rows.Scan(&new2.ID, &new2.Title, &new2.ShortDesc, &new2.ImageURL, &new2.PublishedAt)
+		helper.PanicIfError(err)
+		news = append(news, new2)
+	}
+	return news
 }
 
 func (t *TopicRepositoryImpl) IsExistByName(ctx context.Context, tx *sql.Tx, topicName string) bool {

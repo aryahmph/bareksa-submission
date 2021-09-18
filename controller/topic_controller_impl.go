@@ -42,5 +42,13 @@ func (t *TopicControllerImpl) FindAll(writer http.ResponseWriter, request *http.
 }
 
 func (t *TopicControllerImpl) FindByName(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	panic("implement me")
+	topicName := params.ByName("topicName")
+	newsResponses := t.TopicService.FindByName(request.Context(), topicName)
+	webResponse := web.WebResponse{
+		Code:   200,
+		Status: "OK",
+		Data:   newsResponses,
+	}
+
+	helper.WriteToResponseBody(writer, webResponse)
 }
